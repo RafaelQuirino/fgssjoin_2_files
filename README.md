@@ -18,6 +18,10 @@ record in one line), -q (size of the qgrams, 3 is a good value) and
 
 $ bin/fgssjoin -f data/dblp_t_18k.txt -q 3 -t 0.9
 
+or
+
+$ bin/fgssjoin -f data/dblp_t_18k.txt -q 3 -t 0.9 > output
+
 Reference:
 ---
 Quirino R., Junior S., Ribeiro L. and Martins W. (2017). fgssjoin: A GPU-based Algorithm for Set Similarity Joins . In Proceedings of the 19th International Conference on Enterprise Information Systems - Volume 1: ICEIS, ISBN 978-989-758-247-9, pages 152-161. DOI: 10.5220/0006339001520161
