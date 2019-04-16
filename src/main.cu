@@ -46,7 +46,7 @@ int main (int argc, char** argv)
     float threshold    = args.threshold;
 
     // MEASURING PERFORMANCE (in multiple leves)
-    unsigned long t0, t1, t00, t01, t000, t001;
+	unsigned long t0, t1, t00, t01, t000, t001;
     double total_time;
 
     // OPTIONS
@@ -175,7 +175,6 @@ int main (int argc, char** argv)
 
 
 
-    fprintf (stderr, "\n\n");
     fprintf (stderr, "+-----------------+\n");
     fprintf (stderr, "| ALGORITHM PHASE |\n");
     fprintf (stderr, "+-----------------+\n\n");
@@ -197,15 +196,6 @@ if (cpu_mode) {
 
     ut_print_separator ("=", 80);
     fprintf (stderr, "\nSTARTING CPU SECTION\n\n");
-
-
-    //==========================================================================
-    // 1ST VERSION
-    //==========================================================================
-
-    ut_print_separator ("=", 80); printf ("\n");
-
-    fprintf (stderr, "\n * FGSSJOIN IN CPU *\n\n");
 
     total_time = 0.0;
 
@@ -253,7 +243,7 @@ if (cpu_mode) {
     // FREEING MEMORY ----------------------------------------------------------
     if (cand_size_1 > 1) free(cand_1);
     if (cand_size_1 > 1) free(partial_scores_1);
-    // if (num_pairs_1 > 1) free(similar_pairs_1); // Compacted candidates...
+    if (num_pairs_1 > 1) free(similar_pairs_1); // Compacted candidates...
     if (num_pairs_1 > 1) free(scores_1);
     //--------------------------------------------------------------------------
 
@@ -265,6 +255,10 @@ if (cpu_mode) {
 
 else {
 
+    //==========================================================================
+    // STARTING GPU SECTION
+    //==========================================================================
+
     // VARIABLES
     int device = 0;
     entry_t      *d_lists;
@@ -275,10 +269,9 @@ else {
     unsigned int *d_comp_buckets;
     int          *d_nres;
 
-    fprintf (stderr, "STARTING GPU SECTION\n");
-    fprintf (stderr, "SETTING DEVICE %d\n\n", device);
-    gpu (cudaSetDevice(device));
-    gpu (cudaDeviceReset());
+	fprintf (stderr, "SETTING DEVICE %d\n\n", device);
+	gpu (cudaSetDevice(device));
+	gpu (cudaDeviceReset());
 
     // Preparing data for gpu --------------------------------------------------
     tkns  = tk_convert_tokensets (tsets, n_tokens, &pos, &len);
@@ -288,15 +281,15 @@ else {
     // Sending data to gpu memory ----------------------------------------------
     unsigned long gpumem = 0;
 
+    // Calculating amount of required memory
+    // --------------------------------------
     gpumem += 2 * n_sets * sizeof(unsigned int);
     gpumem += n_tokens * sizeof(unsigned int);
     gpumem += 2 * inv_index->num_lists * sizeof(unsigned int);
     gpumem += inv_index->num_indexed_tokens * sizeof(unsigned int);
-
     gpumem += 2 * n_sets * sizeof(unsigned int);
     gpumem += n_tokens * sizeof(unsigned int);
     gpumem += n_sets * n_sets * sizeof(short);
-
     gpumem += n_sets * n_sets * sizeof(short);
     gpumem += n_sets * n_sets * sizeof(unsigned int);
 
@@ -335,6 +328,8 @@ else {
         cudaMemcpyHostToDevice)
     );
 
+    //--------------------------------------------------------------------------
+
     // Partial scores
     gpu( cudaMalloc (&d_partial_scores, (n_sets * n_sets) * sizeof(short)));
 
@@ -350,7 +345,7 @@ else {
 
 
 
-    // Computing execution time
+    // Computing main phase execution time
     total_time = 0.0;
 
     // FILTERING - GENERATE CANDIDATES -----------------------------------------
@@ -384,7 +379,7 @@ else {
 
     fprintf(stderr, "\nTotal execution time: %gs.\n\n", total_time/1000.0);
 
-} // else of "if (cpu_mode)"
+} // else of if (cpu_mode)
 
 
 
