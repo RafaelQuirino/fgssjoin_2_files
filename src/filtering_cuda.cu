@@ -112,7 +112,7 @@ double filtering_cuda
 {
     unsigned long t0, t1, t00, t01;
 
-    fprintf(stderr, "=> FILTERING, 5th version. (Normal, order 1 or 2).\n");
+    fprintf(stderr, "=> FILTERING...\n");
     t00 = ut_get_time_in_microseconds();
 
     dim3 grid, block;

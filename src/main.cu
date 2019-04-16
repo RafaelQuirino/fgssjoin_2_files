@@ -372,17 +372,13 @@ if (gpu_mode) {
 
 if (gpu_mode) {
     ut_print_separator ("=", 80); printf ("\n");
-    fprintf (stderr, "\n * FGSSJOIN IN GPU - Original fgssjoin *\n\n");
+    fprintf (stderr, "\n * FGSSJOIN IN GPU *\n\n\n");
 }
 
     total_time = 0.0;
 
     // FILTERING - GENERATE CANDIDATES -----------------------------------------
     unsigned int cand_size_2;
-
-if (gpu_mode) {
-    fprintf (stderr, "Running kernel:\n");
-}
 
     total_time += filtering_cuda (
         d_tkns, d_pos, d_len, d_lists, d_pos_idx, d_len_idx,
