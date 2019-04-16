@@ -4,12 +4,12 @@
 #
 #--------------------------------------------------------------------------------------------------
 
+CUDA_INSTALL_PATH ?= /usr/local/cuda
+
 CC   := gcc
 CXX  := g++
 LINK := g++ -fPIC
-NVCC := /usr/local/cuda/bin/nvcc
-
-CUDA_INSTALL_PATH ?= /usr/local/cuda
+NVCC := $(CUDA_INSTALL_PATH)/bin/nvcc
 
 # Includes
 INCLUDES      = -I ../include
