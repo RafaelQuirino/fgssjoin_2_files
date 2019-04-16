@@ -61,5 +61,5 @@ $(TARGET): $(OBJS) Makefile
 
 clean:
 	rm ../.obj/*.o 
-	rm ../$(TARGET)
+	rm ../bin/$(TARGET)
 	
