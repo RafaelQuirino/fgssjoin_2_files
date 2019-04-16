@@ -46,7 +46,7 @@ int main (int argc, char** argv)
     float threshold    = args.threshold;
 
     // MEASURING PERFORMANCE (in multiple leves)
-	unsigned long t0, t1, t00, t01, t000, t001;
+    unsigned long t0, t1, t00, t01, t000, t001;
     double total_time;
 
     // OPTIONS
@@ -276,9 +276,9 @@ else {
     int          *d_nres;
 
     fprintf (stderr, "STARTING GPU SECTION\n");
-	fprintf (stderr, "SETTING DEVICE %d\n\n", device);
-	gpu (cudaSetDevice(device));
-	gpu (cudaDeviceReset());
+    fprintf (stderr, "SETTING DEVICE %d\n\n", device);
+    gpu (cudaSetDevice(device));
+    gpu (cudaDeviceReset());
 
     // Preparing data for gpu --------------------------------------------------
     tkns  = tk_convert_tokensets (tsets, n_tokens, &pos, &len);
