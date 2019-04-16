@@ -269,9 +269,9 @@ else {
     unsigned int *d_comp_buckets;
     int          *d_nres;
 
-	fprintf (stderr, "SETTING DEVICE %d\n\n", device);
-	gpu (cudaSetDevice(device));
-	gpu (cudaDeviceReset());
+    fprintf (stderr, "SETTING DEVICE %d\n\n", device);
+    gpu (cudaSetDevice(device));
+    gpu (cudaDeviceReset());
 
     // Preparing data for gpu --------------------------------------------------
     tkns  = tk_convert_tokensets (tsets, n_tokens, &pos, &len);
