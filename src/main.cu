@@ -50,10 +50,9 @@ int main (int argc, char** argv)
     double total_time;
 
     // OPTIONS
+    int cpu_mode    = 0;
     int print_cand  = 0;
     int print_pairs = 1;
-    int cpu_mode    = 0;
-    int gpu_mode    = 1;
 
     // VARIABLES
     int i;
@@ -176,6 +175,7 @@ int main (int argc, char** argv)
 
 
 
+    fprintf (stderr, "\n\n");
     fprintf (stderr, "+-----------------+\n");
     fprintf (stderr, "| ALGORITHM PHASE |\n");
     fprintf (stderr, "+-----------------+\n\n");
@@ -263,13 +263,7 @@ if (cpu_mode) {
 
 
 
-    //==========================================================================
-    // STARTING GPU SECTION
-    //==========================================================================
-
-if (gpu_mode) {
-    ut_print_separator("=", 80); printf("\n");
-}
+else {
 
     // VARIABLES
     int device = 0;
@@ -281,14 +275,10 @@ if (gpu_mode) {
     unsigned int *d_comp_buckets;
     int          *d_nres;
 
-if (gpu_mode) {
-
     fprintf (stderr, "STARTING GPU SECTION\n");
 	fprintf (stderr, "SETTING DEVICE %d\n\n", device);
 	gpu (cudaSetDevice(device));
 	gpu (cudaDeviceReset());
-
-}
 
     // Preparing data for gpu --------------------------------------------------
     tkns  = tk_convert_tokensets (tsets, n_tokens, &pos, &len);
@@ -303,13 +293,9 @@ if (gpu_mode) {
     gpumem += 2 * inv_index->num_lists * sizeof(unsigned int);
     gpumem += inv_index->num_indexed_tokens * sizeof(unsigned int);
 
-if (gpu_mode) {
-
     gpumem += 2 * n_sets * sizeof(unsigned int);
     gpumem += n_tokens * sizeof(unsigned int);
     gpumem += n_sets * n_sets * sizeof(short);
-
-}
 
     gpumem += n_sets * n_sets * sizeof(short);
     gpumem += n_sets * n_sets * sizeof(unsigned int);
@@ -349,8 +335,6 @@ if (gpu_mode) {
         cudaMemcpyHostToDevice)
     );
 
-    //--------------------------------------------------------------------------
-
     // Partial scores
     gpu( cudaMalloc (&d_partial_scores, (n_sets * n_sets) * sizeof(short)));
 
@@ -366,15 +350,7 @@ if (gpu_mode) {
 
 
 
-    //==========================================================================
-    // GPU - 1ST VERSION
-    //==========================================================================
-
-if (gpu_mode) {
-    ut_print_separator ("=", 80); printf ("\n");
-    fprintf (stderr, "\n * FGSSJOIN IN GPU *\n\n\n");
-}
-
+    // Computing execution time
     total_time = 0.0;
 
     // FILTERING - GENERATE CANDIDATES -----------------------------------------
@@ -407,6 +383,7 @@ if (gpu_mode) {
     //--------------------------------------------------------------------------
 
     fprintf(stderr, "\nTotal execution time: %gs.\n\n", total_time/1000.0);
+}
 
 
 
