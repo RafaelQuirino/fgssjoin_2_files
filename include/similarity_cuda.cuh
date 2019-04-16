@@ -1,3 +1,9 @@
+/* DOCUMENTATION
+
+*/
+
+
+
 #ifndef _SIMILARITY_CUDA_CUH_
 #define _SIMILARITY_CUDA_CUH_
 

@@ -1,3 +1,9 @@
+/* DOCUMENTATION
+
+*/
+
+
+
 #ifndef _COMPACTION_CUH
 #define _COMPACTION_CUH
 

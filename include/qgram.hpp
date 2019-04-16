@@ -1,3 +1,9 @@
+/* DOCUMENTATION
+
+*/
+
+
+
 #ifndef _QGRAM_H_
 #define _QGRAM_H_
 

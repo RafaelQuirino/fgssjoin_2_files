@@ -1,3 +1,9 @@
+/* DOCUMENTATION
+
+*/
+
+
+
 #ifndef _UTIL_CUH_
 #define _UTIL_CUH_
 

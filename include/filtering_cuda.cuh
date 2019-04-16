@@ -1,3 +1,9 @@
+/* DOCUMENTATION
+
+*/
+
+
+
 #ifndef _FILTERING_CUDA_H_
 #define _FILTERING_CUDA_H_
 

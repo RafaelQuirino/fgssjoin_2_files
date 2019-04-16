@@ -1,3 +1,9 @@
+/* DOCUMENTATION
+
+*/
+
+
+
 #ifndef _CHECKING_H_
 #define _CHECKING_H_
 

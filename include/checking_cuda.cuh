@@ -1,6 +1,17 @@
+/* DOCUMENTATION
+
+*/
+
+
+
 #ifndef _CHECKING_CUDA_CUH_
 #define _CHECKING_CUDA_CUH_
 
+
+
+/* DOCUMENTATION
+ *
+ */
 __global__
 void checking_kernel_cuda (
 	unsigned int* buckets, unsigned short* scores, short* partial_scores,
@@ -8,6 +19,11 @@ void checking_kernel_cuda (
     float threshold, unsigned int n_sets, unsigned int csize
 );
 
+
+
+/* DOCUMENTATION
+
+*/
 __host__
 double checking_cuda (
     unsigned int* d_tokens,  unsigned int* d_pos,     unsigned int* d_len,
@@ -17,5 +33,7 @@ double checking_cuda (
     unsigned short** scores_out,
     int*             num_pairs_out
 );
+
+
 
 #endif // _CHECKING_CUDA_CUH_
