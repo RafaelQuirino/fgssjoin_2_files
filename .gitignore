@@ -1,4 +1,5 @@
 # Specific files and folders to ignore
+.vscode/
 .obj/
 bin/
 output
