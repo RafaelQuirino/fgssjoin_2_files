@@ -5,15 +5,17 @@ Parallel Set Similarity Join algorithms for CUDA.
 
 The data/ directory contains test data, from the dblp dataset.
 
-To compile the project just run the script compile.sh. 
+To **compile** the project just run the script compile.sh. 
 You must have CUDA environment installed, and the first variable 
 in the Makefile inside src/ directory (CUDA_INSTALL_PATH) properly configured.
 
-To run the project, execute bin/fgssjoin executable file, created
+$ ./compile.sh
+
+To **run** the project, execute bin/fgssjoin executable file, created
 after the compilation process, with options -f (data file, with each
 record in one line), -q (size of the qgrams, 3 is a good value) and
 -t (similarity threshold, between 0.0 and 1.0).
-Example:
+
 $ bin/fgssjoin -f data/dblp_t_18k.txt -q 3 -t 0.9
 
 Reference:
