@@ -1,4 +1,4 @@
-#fgssjoin: Filtering GPU-based Set Similarity Join
+fgssjoin: Filtering GPU-based Set Similarity Join
 ---
 
 Parallel Set Similarity Join algorithms for CUDA.
@@ -17,7 +17,7 @@ record in one line), -q (size of the qgrams, 3 is a good value) and
 Examples
 ---
 
-####Compilation
+**Compilation**
 
 * Standard compilation:
 ```console
@@ -39,7 +39,7 @@ user@host:~$ ./compile.sh file1 file2 etc...
 user@host:~$ ./compile.sh clean
 ```
 
-####Execution
+**Execution**
 
 * Execution example, printing result to STDOUT
 ```console
