@@ -383,7 +383,8 @@ else {
     //--------------------------------------------------------------------------
 
     fprintf(stderr, "\nTotal execution time: %gs.\n\n", total_time/1000.0);
-}
+
+} // else of "if (cpu_mode)"
 
 
 
