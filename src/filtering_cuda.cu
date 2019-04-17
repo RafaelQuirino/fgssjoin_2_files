@@ -45,7 +45,7 @@ void filtering_kernel_cuda
                 unsigned int source = (unsigned int) e.doc_id;
                 unsigned int source_tpos = (unsigned int) e.pos;
 
-				if (query < source)
+                if (query < source)
                 {
                     unsigned int source_len = len[source];
 
