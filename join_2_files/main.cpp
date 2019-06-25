@@ -83,10 +83,10 @@ int main (int argc, char** argv)
     data = get_input_data(file_path, input_size);
     data_2 = get_input_data(file_path_2, input_size);
 
-    for (unsigned int i = 0; i < data.size(); i++) {
-        fprintf(stderr, "\n\n %u => <<%s>>\n", i+1, data[i].c_str());
-        fflush(stderr);
-    }
+    // for (unsigned int i = 0; i < data.size(); i++) {
+    //     fprintf(stderr, "\n\n %u => <<%s>>\n", i+1, data[i].c_str());
+    //     fflush(stderr);
+    // }
     // PROCESSING DATA
     // proc_data = get_proc_data(raw_data);
     proc_data(data);
