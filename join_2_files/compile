@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# Name of the executable
+EXEC="run"
+
+# Name of object's directory
+OBJ=".obj"
+
+# Create obj/ directory if none
+if [ ! -d $OBJ ]; then
+	mkdir $OBJ
+fi
+
+# if [all] option given, remove objects and executable;
+# or else only the given targets
+if [ "$1" == "all" ]; then
+	nfiles=$(ls ./$OBJ/|grep '\.o$'|wc -l)
+	if [ $nfiles != 0 ]; then
+		rm $OBJ/*.o
+	fi
+	if [ -a $EXEC ]; then
+		rm $EXEC
+	fi
+else
+	for target in "$@"; do
+		[ -f ./$OBJ/$target.o ] && rm $OBJ/$target.o
+	done
+fi
+
+# Bring all objects to main directory
+nfiles=$(ls ./$OBJ/|grep '\.o$'|wc -l)
+if [ $nfiles != 0 ]; then
+	for fname in "./$OBJ/*.o"; do
+		mv $fname ./
+	done
+fi
+
+# Get .c, .cpp and .cu files from main directory
+SOURCES=$(ls ./|grep '\.c$\|\.cpp$\|\.cu$')
+echo $SOURCES
+# exit
+
+#-------------------------------------------------------------------------------
+# # Build string with all sources, concat with '.o'
+# SRC=""
+# IFS=' ' read -r -a array <<< $SOURCES
+# for element in "${array[@]}";do
+#     #echo "STRING => $element.o"
+# 		SRC="$SRC$element.o "
+# done
+# #echo $SRC
+
+# Build string with all sources, concat with '.o'
+SRCS=""
+for x in $SOURCES; do
+  SRCS="$SRCS$x.o "
+	# echo $SRCS
+done
+# exit
+#-------------------------------------------------------------------------------
+
+
+# Call make, passing sources argument and executable name
+SRC=$SRCS EXEC=$EXEC make
+
+
+# Move back all object to $OBJ directory,
+# so they don't pollute the sources directory
+for fname in "./*.o"; do
+	mv $fname $OBJ/
+done
