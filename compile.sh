@@ -60,25 +60,19 @@ if [ -a $BIN/$EXEC ]; then
 fi
 
 # Get .c, .cpp and .cu files from src directory
-SOURCES=$(ls $SRC/|grep '\.c$\|\.cpp$\|\.cu$')
-#echo $SOURCES
-#exit
+SOURCES=$(ls -R $SRC/|grep '\.c$\|\.cpp$\|\.cu$')
 
 # Build string with all sources, concat with '.o'
 SRCS=""
 for x in $SOURCES; do
-    #echo "STRING => $x.o"
     SRCS="$SRCS$x.o "
 done
-#echo $SRCS
-#exit
 
 # Call make, passing sources argument and executable name
+printf "Building...\n"
 cd $SRC
 SRC=$SRCS EXEC=$EXEC make
 cd ../
-#echo $SRC
-#exit
 
 # Move back all object to $OBJ directory,
 # so they don't pollute the sources directory

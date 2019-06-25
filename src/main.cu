@@ -18,16 +18,16 @@
 #include "data.hpp"
 #include "qgram.hpp"
 #include "token.hpp"
-#include "inv_index.hpp"
 
 // CPU libs
-#include "filtering.hpp"
-#include "checking.hpp"
+#include "inv_index_cpu.hpp"
+#include "filtering_cpu.hpp"
+#include "checking_cpu.hpp"
 
 // Cuda libs
-#include "util_cuda.cuh"
-#include "filtering_cuda.cuh"
-#include "checking_cuda.cuh"
+#include "util_gpu.cuh"
+#include "filtering_gpu.cuh"
+#include "checking_gpu.cuh"
 
 
 
@@ -46,7 +46,7 @@ int main (int argc, char** argv)
     float threshold    = args.threshold;
 
     // MEASURING PERFORMANCE (in multiple leves)
-	unsigned long t0, t1, t00, t01, t000, t001;
+    unsigned long t0, t1, t00, t01, t000, t001;
     double total_time;
 
     // OPTIONS
@@ -114,11 +114,11 @@ int main (int argc, char** argv)
     }
 
     t01 = ut_get_time_in_microseconds();
-    fprintf (stderr, "> Done in %gms.\n\n", ut_interval_in_miliseconds (t00, t01));
+    fprintf(stderr, "> Done in %gms.\n\n", ut_interval_in_miliseconds (t00, t01));
 
-    fprintf (stderr, "n_sets  : %lu\n", n_sets);
-    fprintf (stderr, "n_terms : %lu\n", n_terms);
-    fprintf (stderr, "n_tokens: %lu\n\n", n_tokens);
+    fprintf(stderr, "n_sets  : %lu\n", n_sets);
+    fprintf(stderr, "n_terms : %lu\n", n_terms);
+    fprintf(stderr, "n_tokens: %lu\n\n", n_tokens);
     //--------------------------------------------------------------------------
 
 
@@ -130,13 +130,13 @@ int main (int argc, char** argv)
     tsets = tk_get_tokensets (dict, docs);
 
     t01 = ut_get_time_in_microseconds();
-    fprintf (stderr, "> Done in %gms.\n\n", ut_interval_in_miliseconds (t00, t01));
+    fprintf(stderr, "> Done in %gms.\n\n", ut_interval_in_miliseconds (t00, t01));
     //--------------------------------------------------------------------------
 
 
-    
+
     // SORTING AND PREPARING TOKENSETS ----------------------------------------
-    fprintf (stderr, "Preparing token sets...\n");
+    fprintf(stderr, "Preparing token sets...\n");
     t00 = ut_get_time_in_microseconds();
 
     // Sort sets in decreasing size order.
@@ -146,49 +146,47 @@ int main (int argc, char** argv)
     doc_index = tk_sort_sets (tsets);
 
     t001 = ut_get_time_in_microseconds();
-    fprintf (stderr, "\t> Done. It took %gms.\n",
-        ut_interval_in_miliseconds (t000, t001)
-    );
-
-    fprintf (stderr, "\tSorting each set by term frequency...\n");
-    t000 = ut_get_time_in_microseconds();
-
-    tk_sort_freq (tsets);
-
-    t001 = ut_get_time_in_microseconds();
     fprintf(stderr, "\t> Done. It took %gms.\n",
         ut_interval_in_miliseconds (t000, t001)
     );
 
+    fprintf(stderr, "\tSorting each set by term frequency...\n");
+    t000 = ut_get_time_in_microseconds();
+
+    tk_sort_freq(tsets);
+
+    t001 = ut_get_time_in_microseconds();
+    fprintf(stderr, "\t> Done. It took %gms.\n",
+        ut_interval_in_miliseconds(t000, t001)
+    );
+
     t01 = ut_get_time_in_microseconds();
-    fprintf (stderr, "> Done in %gms.\n\n", ut_interval_in_miliseconds (t00, t01));
+    fprintf(stderr, "> Done in %gms.\n\n", ut_interval_in_miliseconds (t00, t01));
     //--------------------------------------------------------------------------
 
 
 
     t1 = ut_get_time_in_microseconds();
     fprintf(stderr, "Pre-processing phase took %gms.\n\n",
-        ut_interval_in_miliseconds (t0, t1)
+        ut_interval_in_miliseconds(t0,t1)
     );
 
-    //exit (0);
 
 
+    fprintf(stderr, "+-----------------+\n");
+    fprintf(stderr, "| ALGORITHM PHASE |\n");
+    fprintf(stderr, "+-----------------+\n\n");
 
-    fprintf (stderr, "+-----------------+\n");
-    fprintf (stderr, "| ALGORITHM PHASE |\n");
-    fprintf (stderr, "+-----------------+\n\n");
-
-    fprintf (stderr, "Building index...\n");
+    fprintf(stderr, "Building index...\n");
 
     t0 = ut_get_time_in_microseconds();
 
     // CREATING INVERTED INDEX -------------------------------------------------
-    inv_index = idx_get_inv_index (tsets, n_terms, n_tokens, threshold);
+    inv_index = idx_get_inv_index(tsets, n_terms, n_tokens, threshold);
     //--------------------------------------------------------------------------
 
     t1 = ut_get_time_in_microseconds();
-    fprintf (stderr, "> Done in %g ms.\n\n", ut_interval_in_miliseconds (t0, t1));
+    fprintf (stderr, "> Done in %g ms.\n\n", ut_interval_in_miliseconds(t0,t1));
 
 
 
@@ -201,9 +199,9 @@ if (cpu_mode) {
 
     // FILTERING - GENERATE CANDIDATES -----------------------------------------
     unsigned int* cand_1;
-    unsigned int cand_size_1;
+    unsigned int  cand_size_1;
     short* partial_scores_1;
-    
+
     total_time += filtering (
         tsets, inv_index, threshold,
         &cand_1, &cand_size_1, &partial_scores_1
@@ -211,9 +209,9 @@ if (cpu_mode) {
 
     // Printing candidates
     //---------------------
-    if (print_cand) 
+    if (print_cand)
     {
-        for (i = 0; i < cand_size_1; i++) 
+        for (i = 0; i < cand_size_1; i++)
         {
             int doc1 = cand_1[i] / tsets.size();
             int doc2 = cand_1[i] % tsets.size();
@@ -247,7 +245,7 @@ if (cpu_mode) {
     if (num_pairs_1 > 1) free(scores_1);
     //--------------------------------------------------------------------------
 
-    fprintf (stderr, "\nTotal execution time: %gs.\n\n", total_time / 1000.0);
+    fprintf(stderr, "\nTotal execution time: %gs.\n\n", total_time / 1000.0);
 
 } // if (cpu_mode)
 
@@ -269,13 +267,13 @@ else {
     unsigned int *d_comp_buckets;
     int          *d_nres;
 
-    fprintf (stderr, "SETTING DEVICE %d\n\n", device);
-    gpu (cudaSetDevice(device));
-    gpu (cudaDeviceReset());
+    fprintf(stderr, "SETTING DEVICE %d\n\n", device);
+    gpu(cudaSetDevice(device));
+    gpu(cudaDeviceReset());
 
     // Preparing data for gpu --------------------------------------------------
-    tkns  = tk_convert_tokensets (tsets, n_tokens, &pos, &len);
-    lists = idx_convert_inv_index (inv_index, &pos_idx, &len_idx);
+    tkns  = tk_convert_tokensets(tsets, n_tokens, &pos, &len);
+    lists = idx_convert_inv_index(inv_index, &pos_idx, &len_idx);
     //--------------------------------------------------------------------------
 
     // Sending data to gpu memory ----------------------------------------------
@@ -293,54 +291,42 @@ else {
     gpumem += n_sets * n_sets * sizeof(short);
     gpumem += n_sets * n_sets * sizeof(unsigned int);
 
-    fprintf( stderr, "Allocating and sending %gMB to gpu memory...\n",
+    fprintf(stderr, "Allocating and sending %gMB to gpu memory...\n",
         (double) gpumem / (1024.0 * 1024.0)
     );
     t0 = ut_get_time_in_microseconds();
 
     // Token sets
-    gpu( cudaMalloc (&d_pos, n_sets * sizeof(unsigned int)));
-    gpu( cudaMalloc (&d_len, n_sets * sizeof(unsigned int)));
-    gpu( cudaMalloc (&d_tkns, n_tokens * sizeof(unsigned int)));
-    gpu( cudaMemcpy (d_pos, pos, n_sets * sizeof(unsigned int),
-        cudaMemcpyHostToDevice)
-    );
-    gpu( cudaMemcpy (d_len, len, n_sets * sizeof(unsigned int),
-        cudaMemcpyHostToDevice)
-    );
-    gpu( cudaMemcpy (d_tkns, tkns, n_tokens * sizeof(unsigned int),
-        cudaMemcpyHostToDevice)
-    );
+    gpu(cudaMalloc(&d_pos, n_sets * sizeof(unsigned int)));
+    gpu(cudaMalloc(&d_len, n_sets * sizeof(unsigned int)));
+    gpu(cudaMalloc(&d_tkns, n_tokens * sizeof(unsigned int)));
+    gpu(cudaMemcpy(d_pos, pos, n_sets * sizeof(unsigned int), cudaMemcpyHostToDevice));
+    gpu(cudaMemcpy(d_len, len, n_sets * sizeof(unsigned int), cudaMemcpyHostToDevice));
+    gpu(cudaMemcpy(d_tkns, tkns, n_tokens * sizeof(unsigned int), cudaMemcpyHostToDevice));
 
     // Inverted index
     num_lists = inv_index->num_lists;
     num_indexed_tokens = inv_index->num_indexed_tokens;
-    gpu( cudaMalloc (&d_pos_idx, num_lists * sizeof(unsigned int)));
-    gpu( cudaMalloc (&d_len_idx, num_lists * sizeof(unsigned int)));
-    gpu( cudaMalloc (&d_lists, num_indexed_tokens * sizeof(entry_t)));
-    gpu( cudaMemcpy (d_pos_idx, pos_idx, num_lists * sizeof(unsigned int),
-        cudaMemcpyHostToDevice)
-    );
-    gpu( cudaMemcpy (d_len_idx, len_idx, num_lists * sizeof(unsigned int),
-        cudaMemcpyHostToDevice)
-    );
-    gpu( cudaMemcpy (d_lists, lists, num_indexed_tokens * sizeof(entry_t),
-        cudaMemcpyHostToDevice)
-    );
+    gpu(cudaMalloc(&d_pos_idx, num_lists * sizeof(unsigned int)));
+    gpu(cudaMalloc(&d_len_idx, num_lists * sizeof(unsigned int)));
+    gpu(cudaMalloc(&d_lists, num_indexed_tokens * sizeof(entry_t)));
+    gpu(cudaMemcpy(d_pos_idx, pos_idx, num_lists * sizeof(unsigned int), cudaMemcpyHostToDevice));
+    gpu(cudaMemcpy(d_len_idx, len_idx, num_lists * sizeof(unsigned int), cudaMemcpyHostToDevice));
+    gpu(cudaMemcpy(d_lists, lists, num_indexed_tokens * sizeof(entry_t), cudaMemcpyHostToDevice));
 
     //--------------------------------------------------------------------------
 
     // Partial scores
-    gpu( cudaMalloc (&d_partial_scores, (n_sets * n_sets) * sizeof(short)));
+    gpu(cudaMalloc (&d_partial_scores, (n_sets * n_sets) * sizeof(short)));
 
     // Compacted buckets
-    gpu( cudaMalloc (&d_comp_buckets, (n_sets * n_sets) * sizeof(unsigned int)));
+    gpu(cudaMalloc (&d_comp_buckets, (n_sets * n_sets) * sizeof(unsigned int)));
 
     // Compacted size
-    gpu( cudaMalloc (&d_nres, sizeof(int)));
+    gpu(cudaMalloc(&d_nres, sizeof(int)));
 
     t1 = ut_get_time_in_microseconds();
-    fprintf (stderr, "> Done in %g ms.\n\n", ut_interval_in_miliseconds (t0, t1));
+    fprintf(stderr, "> Done in %g ms.\n\n", ut_interval_in_miliseconds(t0,t1));
     //--------------------------------------------------------------------------
 
 

@@ -1,8 +1,8 @@
-#--------------------------------------------------------------------------------------------------
-# DOCUMENTATION	
+#-------------------------------------------------------------------------------
+# DOCUMENTATION
 # -------------
 #
-#--------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 CUDA_INSTALL_PATH ?= /usr/local/cuda
 
@@ -16,7 +16,6 @@ INCLUDES      = -I ../include
 INCLUDES_CUDA = -I $(CUDA_INSTALL_PATH)/include
 
 # Common flags
-#COMMONFLAGS += -g -lineinfo $(INCLUDES)
 COMMONFLAGS  += $(INCLUDES) -O3 -m64
 CFLAGS       += $(COMMONFLAGS)
 CXXFLAGS     += -std=c++0x $(COMMONFLAGS)
@@ -24,8 +23,7 @@ NVCCFLAGS    += -std=c++11 $(COMMONFLAGS) $(INCLUDES_CUDA) --compiler-options "-
 
 
 #Then you specify where to locate the CUDA binaries for linking :
-#LIB_CUDA := -L$(CUDA_INSTALL_PATH)/lib -lcudart
-LIB_CUDA := -L $(CUDA_INSTALL_PATH)/lib64 -l cudart #-l OpenCL
+LIB_CUDA := -L $(CUDA_INSTALL_PATH)/lib64 -l cudart
 LIB_COMMON := -l pthread -l m
 
 
@@ -60,6 +58,5 @@ $(TARGET): $(OBJS) Makefile
 
 
 clean:
-	rm ../.obj/*.o 
+	rm ../.obj/*.o
 	rm ../bin/$(TARGET)
-	
