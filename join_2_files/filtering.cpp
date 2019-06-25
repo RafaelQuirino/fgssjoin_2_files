@@ -17,16 +17,13 @@ void filtering_kernel_1 (
 
     // For each query set...
     for (unsigned int i = 0; i < n; i++)
-	{
+    {
         unsigned int query = i;
         unsigned int query_len = tsets[i].size();
 
-        unsigned int query_jac_prefix_size =
-            h_jac_max_prefix (query_len, threshold);
-		unsigned int query_jac_min_size =
-            (unsigned int) floor(h_jac_min_size(query_len, threshold));
-        unsigned int query_jac_max_size =
-            (unsigned int) floor(h_jac_max_size(query_len, threshold));
+        unsigned int query_jac_prefix_size = h_jac_max_prefix (query_len, threshold);
+		unsigned int query_jac_min_size = (unsigned int) floor(h_jac_min_size(query_len, threshold));
+        unsigned int query_jac_max_size = (unsigned int) floor(h_jac_max_size(query_len, threshold));
 
         // For each query token in the prefix...
 		for (unsigned j = 0; j < query_jac_prefix_size; j++)
